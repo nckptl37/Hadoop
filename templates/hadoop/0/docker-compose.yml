@@ -1,0 +1,99 @@
+namenode:
+  image: monupawan/hadoop
+  restart: always
+  command: bash /usr/local/hadoop-2.7.1/start-hadoop.sh namenode namenode secondarynamenode resourcemanager hadoop
+  environment:
+   - VCORES_NUM=${vcores_num}
+   - NM_MEM=${nm_mem}
+   - SCHEDULER_MIN_MB=${scheduler_min_mb}
+   - LOG_AGG=${log_agg}
+   - MAP_MEM=${map_mem}
+   - REDUCE_MEM=${reduce_mem}
+   - MAP_OPTS=${map_opts}
+   - REDUCE_OPTS=${reduce_opts}
+   - DFS_REPLICATION=${dfs_replication}
+  ports:
+   - 50070:50070
+secondarynamenode:
+  image: monupawan/hadoop
+  restart: always
+  command: bash /usr/local/hadoop-2.7.1/start-hadoop.sh secondarynamenode namenode secondarynamenode resourcemanager hadoop
+  environment:
+   - VCORES_NUM=${vcores_num}
+   - NM_MEM=${nm_mem}
+   - SCHEDULER_MIN_MB=${scheduler_min_mb}
+   - LOG_AGG=${log_agg}
+   - MAP_MEM=${map_mem}
+   - REDUCE_MEM=${reduce_mem}
+   - MAP_OPTS=${map_opts}
+   - REDUCE_OPTS=${reduce_opts}
+   - DFS_REPLICATION=${dfs_replication}
+  links: 
+   - namenode:namenode
+  ports:
+   - 50090:50090
+datanode:
+  image: monupawan/hadoop
+  restart: always
+  command: bash /usr/local/hadoop-2.7.1/start-hadoop.sh datanode namenode secondarynamenode resourcemanager hadoop
+  environment:
+   - VCORES_NUM=${vcores_num}
+   - NM_MEM=${nm_mem}
+   - SCHEDULER_MIN_MB=${scheduler_min_mb}
+   - LOG_AGG=${log_agg}
+   - MAP_MEM=${map_mem}
+   - REDUCE_MEM=${reduce_mem}
+   - MAP_OPTS=${map_opts}
+   - REDUCE_OPTS=${reduce_opts}
+   - DFS_REPLICATION=${dfs_replication}
+  links: 
+   - namenode:namenode
+   - resourcemanager:resourcemanager
+  ports:
+   - 50010:50010
+   - 50075:50075
+   - 50020:50020
+resourcemanager:
+  image: monupawan/hadoop
+  restart: always
+  command: bash /usr/local/hadoop-2.7.1/start-hadoop.sh resourcemanager namenode secondarynamenode resourcemanager yarn
+  environment:
+   - VCORES_NUM=${vcores_num}
+   - NM_MEM=${nm_mem}
+   - SCHEDULER_MIN_MB=${scheduler_min_mb}
+   - LOG_AGG=${log_agg}
+   - MAP_MEM=${map_mem}
+   - REDUCE_MEM=${reduce_mem}
+   - MAP_OPTS=${map_opts}
+   - REDUCE_OPTS=${reduce_opts}
+   - DFS_REPLICATION=${dfs_replication}
+  links: 
+    - namenode:namenode
+  ports:
+   - 8088:8088
+   - 8032:8032
+   - 8033:8033
+   - 8030:8030
+   - 8031:8031
+nodemanager:
+  image: monupawan/hadoop
+  restart: always
+  command: bash /usr/local/hadoop-2.7.1/start-hadoop.sh nodemanager namenode secondarynamenode resourcemanager yarn
+  environment:
+   - VCORES_NUM=${vcores_num}
+   - NM_MEM=${nm_mem}
+   - SCHEDULER_MIN_MB=${scheduler_min_mb}
+   - LOG_AGG=${log_agg}
+   - MAP_MEM=${map_mem}
+   - REDUCE_MEM=${reduce_mem}
+   - MAP_OPTS=${map_opts}
+   - REDUCE_OPTS=${reduce_opts}
+   - DFS_REPLICATION=${dfs_replication}
+  links: 
+   - namenode:namenode
+   - resourcemanager:resourcemanager
+  ports:
+   - 50030:50030
+   - 50060:50060
+   - 8040:8040
+   - 8041:8042
